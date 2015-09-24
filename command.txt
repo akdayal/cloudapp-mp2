@@ -1,0 +1,58 @@
+hadoop jar TitleCount.jar TitleCount -D stopwords=/mp2/misc/stopwords.txt -D delimiters=/mp2/misc/delimiters.txt /mp2/titles /mp2/A-output
+
+
+
+
+hadoop com.sun.tools.javac.Main TitleCount.java -d build
+jar -cvf TitleCount.jar -C build/ ./
+ 
+ 
+ 
+ 
+ # Run these two command before attempting TitleCount Exercise
+hadoop fs -mkdir -p /mp2/A-input
+hadoop fs -mkdir -p /mp2/A-output
+
+# Run all these codes everytime you make revisions to your JAVA file.
+rm -rf ./build/* ./TitleCount.jar
+export HADOOP_CLASSPATH=$JAVA_HOME/lib/tools.jar
+hadoop com.sun.tools.javac.Main TitleCount.java -d build
+jar -cvf TitleCount.jar -C build/ ./
+hadoop fs -rm -r /mp2/A-output
+hadoop jar TitleCount.jar TitleCount -D stopwords=/mp2/misc/stopwords.txt -D delimiters=/mp2/misc/delimiters.txt /mp2/titles /mp2/A-output
+
+# Execute this after the series of commands above, granted it did not return any errors.
+# This will show you the result of your code
+hadoop fs -cat /mp2/A-output/part*
+
+
+hadoop com.sun.tools.javac.Main TopTitles.java -d build_toptitile
+jar -cvf TopTitles.jar -C build_toptitile/ ./
+hadoop fs -rm -r /mp2/B-output
+hadoop jar TopTitles.jar TopTitles -D stopwords=/mp2/misc/stopwords.txt -D delimiters=/mp2/misc/delimiters.txt -D N=10 /mp2/titles /mp2/B-output
+
+
+hadoop com.sun.tools.javac.Main TopTitleStatistics.java -d build_toptitile_stat
+jar -cvf TopTitleStatistics.jar -C build_toptitile_stat/ ./
+hadoop fs -rm -r /mp2/C-output
+hadoop jar TopTitleStatistics.jar TopTitleStatistics -D stopwords=/mp2/misc/stopwords.txt -D delimiters=/mp2/misc/delimiters.txt -D N=10 /mp2/titles /mp2/C-output
+
+
+
+hadoop com.sun.tools.javac.Main OrphanPages.java -d build_opage
+jar -cvf OrphanPages.jar -C build_opage/ ./
+hadoop fs -rm -r /mp2/D-output
+hadoop jar OrphanPages.jar OrphanPages /mp2/links /mp2/D-output
+
+
+
+
+
+hadoop fs -copyToLocal /mp2/B-output/part-r-00000 /root/cloudapp-mp2/tmp
+bin/hadoop fs -copyToLocal /hdfs/source/path /localfs/destination/path
+
+
+useful url
+http://192.168.80.129:50070/explorer.html#/mp2/titles
+
+http://192.168.80.129:8088
